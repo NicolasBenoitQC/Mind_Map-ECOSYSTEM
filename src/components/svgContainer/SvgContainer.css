@@ -1,0 +1,13 @@
+.App {
+  text-align: center;
+  height: auto;
+}
+
+
+
+.svg-container {
+  height: 100%;
+	width: auto;
+	vertical-align: middle; 
+	overflow: hidden; 
+}
