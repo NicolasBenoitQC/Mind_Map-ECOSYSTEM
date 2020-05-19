@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Button, ButtonGroup, makeStyles} from '@material-ui/core'
-import axios from 'axios'
+import queryString from 'query-string';
+import io from 'socket.io-client';
+
+import { Button, ButtonGroup, makeStyles} from '@material-ui/core';
+import axios from 'axios';
 import './SvgContainer.css';
 import ParentCircle from '../parentCircle/ParentCircle';
 import ChildCircle from '../childCircle/ChildCircle';
 
+// set style element of material-ui
 const useStylesButton = makeStyles(() => ({
   rootButton: {
     display: 'flex',
@@ -13,22 +17,56 @@ const useStylesButton = makeStyles(() => ({
   },
 }));
 
-const  SvgContainer = props => {
-  const [array, setArray] = useState([])
-  
-  useEffect (() => {getAll()},[]);
-  useEffect (() => {},[array]);
+// component hooks generate the mindmap with the parent circle and the child circles;
+const  SvgContainer = ({ location }) => {
+// ---------------- initialize variable -------------
+  const [array, setArray] = useState([]);
+  const [name, setName] = useState('');
+  const [mindmap, setMindmap] =useState('');
 
   const mainPath = 'http://localhost:5000/';
+  const ENDPOINT = 'localhost:5000/';
+// --------------------------------------------------
 
+// ............... catch event and update .......................
+  // actualise when load page;
+  useEffect(() => {getAll()},[]);
+  // actialise when array is updated (setArray);
+  useEffect(() => {},[array]);
+  // for the moment is the proto for use socket.io
+  useEffect(() => {
+  // get the information from the search bar emit by the login page;
+    const { username, mindmapCard } = queryString.parse(location.search);
+    setName(username);
+    setMindmap(mindmapCard);
+  // check data extract from the search bar;
+    console.log(location.search);
+    console.log(username);
+    console.log(mindmapCard);
+
+  // connect the client to socket.io;
+    // this is the proto from the documentation socket.io;
+///*
+    const socket = io.connect(ENDPOINT);
+    socket.on('news', (data) => {
+    console.log(data);
+    socket.emit('new join', `${username} has join the mindmap ${mindmapCard}`);
+    
+  }); //*/
+  }, [ENDPOINT, location.search]);
+// .................................................
+
+// __________ Request to data base MongooseDB ____________
+  // get title and description of each child circle;
   const getAll = () => {
     axios.get(mainPath + 'childs/')
       .then(response => {
         setArray(response.data)
       })  
       .catch(error => console.log('this is the error to the methode getAll' + error))
-  }
+  };
 
+  // add new child circle with value by default;
   const add = () => {
     const newCircle = {
       title: 'New circle ',
@@ -43,8 +81,9 @@ const  SvgContainer = props => {
       .catch((error) => { console.log(`message error from post add : ${error}`)}
       )
 
-  }
+  };
 
+  // delete the last create child circle (like -1);
   const deleteCircle = () => {
     if(array.length > 0) {
       const number = array.length-1;
@@ -55,8 +94,11 @@ const  SvgContainer = props => {
         })
         .catch(error => console.log(`message error from action delete : ${error}`))
     }
-  }
+  };
+// _________________________________________________________
 
+// -------------- element for the DOM ----------------------
+  // generate all child circle element;
   const listChild = () => {
     return array.map((currentChildCircle) => {
       return <ChildCircle 
@@ -65,8 +107,9 @@ const  SvgContainer = props => {
                 number={array.length} 
               />
     })
-  }
+  };
 
+  // generate the button add and delete at the top the mindmap;
   const Buttons = () => {
     const classes = useStylesButton();
 
@@ -80,8 +123,9 @@ const  SvgContainer = props => {
                 <Button>.....</Button>
               </ButtonGroup>
             </div>
-  }  
-
+  }; 
+//----------------------------------------------------------
+  // react component return
   return (
     <div>
       {Buttons()}

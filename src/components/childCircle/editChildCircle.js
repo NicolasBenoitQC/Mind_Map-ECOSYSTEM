@@ -28,7 +28,7 @@ const EditChildCircle = props => {
         id: '',
     }])
 
-    useEffect(() => {getCircle()},[]);
+    useEffect(() => {getCircle()},[]); // JMA why this warning
     useEffect(() => {}, [circle]);
 
 

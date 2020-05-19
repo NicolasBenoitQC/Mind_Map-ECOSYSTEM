@@ -40,6 +40,10 @@ const MenuBar = props => {
         setAnchorEl(null);
     };
 
+    const backToLogin = () => {
+        window.location = '/login';
+    };
+
     return (
         <div className={classesBar.rootBar}>
             <AppBar position="static" color='inherit'>
@@ -78,6 +82,7 @@ const MenuBar = props => {
                     >
                     <MenuItem onClick={handleClose}>Profile</MenuItem>
                     <MenuItem onClick={handleClose}>My account</MenuItem>
+                    <MenuItem onClick={backToLogin}>Login page</MenuItem>
                     </Menu>
                 </div>
                 )}
