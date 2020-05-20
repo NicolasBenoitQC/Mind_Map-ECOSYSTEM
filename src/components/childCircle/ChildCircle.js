@@ -38,10 +38,11 @@ const ChildCircle = props => {
                 width='14'
                 height='14'
                 fontSize="3"
+                font-family="Arial, Helvetica, sans-serif"
                 >
                 <div className='childDescriptionContainer'>
                     <Link  to={{pathname: '/edit', aboutProps:{id: circle._id}}} className="childDescription">
-                        {circle.title}
+                        {circle.title} {/* JMA text is different on screen laptop to big screen*/}
                     </Link>  
                 </div>
             </foreignObject>

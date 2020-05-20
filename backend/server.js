@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 // section socket.io
 const socketio = require('socket.io'); 
 const http = require('http');
-const { addUser, removeUser, getUser, getUserInMindmap } = require('./user');
+//const { addUser, removeUser, getUser, getUserInMindmap } = require('./user');
 
 // -------------- section set server ----------------------------
 const app = express();
@@ -41,13 +41,15 @@ app.get('/', (req, res) => {
     res.send('Server for socket.io is up and running');
   });
 
-io.on('connection', (socket) => {
 
-    socket.emit('news', 'welcome to connect mindmap.');
-    socket.on('new join', (data) => {
-        console.log(data);
-    });
+
+io.on('connection', (socket) => {
+        socket.on('ferret', ( name, mindmap, fn) => {
+            fn(`welcome ${name} to the ${mindmap}`);  
+            socket.broadcast.emit('join', `${name} has join the mindmap`);
+        });
 });
+
 
 server.listen(port, () => {
     console.log(`Server is running on port : ${port}`)

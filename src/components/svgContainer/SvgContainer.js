@@ -36,24 +36,31 @@ const  SvgContainer = ({ location }) => {
   // for the moment is the proto for use socket.io
   useEffect(() => {
   // get the information from the search bar emit by the login page;
-    const { username, mindmapCard } = queryString.parse(location.search);
+    const { username } = queryString.parse(location.search);
     setName(username);
+
+    const mindmapCard = 'MindMap 1';
     setMindmap(mindmapCard);
   // check data extract from the search bar;
     console.log(location.search);
     console.log(username);
     console.log(mindmapCard);
+    console.log(name);
+    console.log(mindmap);
 
   // connect the client to socket.io;
     // this is the proto from the documentation socket.io;
-///*
     const socket = io.connect(ENDPOINT);
-    socket.on('news', (data) => {
-    console.log(data);
-    socket.emit('new join', `${username} has join the mindmap ${mindmapCard}`);
-    
-  }); //*/
-  }, [ENDPOINT, location.search]);
+
+    socket.emit('ferret', username, mindmapCard, (data) => {
+      console.log(data)
+    });
+
+    socket.on('join', (data) => {
+      console.log(data);
+    });
+
+  },[ENDPOINT, location.search]);
 // .................................................
 
 // __________ Request to data base MongooseDB ____________

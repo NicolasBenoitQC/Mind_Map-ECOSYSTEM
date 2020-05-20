@@ -28,8 +28,9 @@ const EditChildCircle = props => {
         id: '',
     }])
 
-    useEffect(() => {getCircle()},[]); // JMA why this warning
+    
     useEffect(() => {}, [circle]);
+    useEffect(getCircle,[]); // JMA why this warning
 
 
     const mainPath = 'http://localhost:5000/';
@@ -41,6 +42,8 @@ const EditChildCircle = props => {
             })
             .catch(error => console.log('This is the error to the methode get : ' + error))
     }
+
+    
 
     const handleChangeTitle = (event) => {
         const updateCircle = {

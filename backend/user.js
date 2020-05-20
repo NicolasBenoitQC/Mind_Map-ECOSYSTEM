@@ -1,8 +1,8 @@
 const users = [];
 
 const addUser = ({id, username, mindmap}) => {
-    username = username.time().toLowerCase();
-    mindmap = mindmap.time().toLowerCase();
+    username = username.trim().toLowerCase();
+    mindmap = mindmap.trim().toLowerCase();
 
     const existingUser = users.find(
         (user) => user.mindmap === mindmap && user.username === username
