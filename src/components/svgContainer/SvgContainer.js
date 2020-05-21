@@ -38,15 +38,8 @@ const  SvgContainer = ({ location }) => {
   // get the information from the search bar emit by the login page;
     const { username } = queryString.parse(location.search);
     setName(username);
-
     const mindmapCard = 'MindMap 1';
     setMindmap(mindmapCard);
-  // check data extract from the search bar;
-    console.log(location.search);
-    console.log(username);
-    console.log(mindmapCard);
-    console.log(name);
-    console.log(mindmap);
 
   // connect the client to socket.io;
     // this is the proto from the documentation socket.io;

@@ -30,7 +30,7 @@ const EditChildCircle = props => {
 
     
     useEffect(() => {}, [circle]);
-    useEffect(getCircle,[]); // JMA why this warning
+    useEffect(getCircle,[]);
 
 
     const mainPath = 'http://localhost:5000/';
