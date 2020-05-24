@@ -1,6 +1,7 @@
 ------- To Do -----------------
 1)
-In backend replace REST (get, add, delete ) by socket.io
+In backend replace REST (get, add, delete, update) by socket.io
+DONE
 
 2)
 read doc redux
@@ -14,6 +15,15 @@ Make the update of the new position to the circle in the side backend.
 4)
 convert js in type script
 
+5)
+make the unit test
+
+
+
+
+-------- BUG ---------------------
+1)
+Edit circle when click enter in the textfield title app crash
 
 
 

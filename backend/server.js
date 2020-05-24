@@ -2,6 +2,7 @@ const express = require('express');
 // section mongooseDB
 const cors = require('cors');
 const mongoose = require('mongoose');
+const Child = require('./models/child.model');
 // section socket.io
 const socketio = require('socket.io'); 
 const http = require('http');
@@ -37,17 +38,66 @@ app.use('/childs', childsRouter);
 const server = http.createServer(app);
 const io = socketio(server);
 
-app.get('/', (req, res) => {
-    res.send('Server for socket.io is up and running');
-  });
-
-
-
 io.on('connection', (socket) => {
-        socket.on('ferret', ( name, mindmap, fn) => {
+    // receve username join the mindmap and name mindmap select. 
+        socket.on('start', ( name, mindmap, fn) => {
             fn(`welcome ${name} to the ${mindmap}`);  
             socket.broadcast.emit('join', `${name} has join the mindmap`);
         });
+        
+        socket.on('get all childs circles', (mindmap, fn) => {           
+            Child.find()
+            .then(childs => fn(childs), console.log('get all'))
+            .catch(err => console.log(json('Error: ' + err)));
+        });
+
+        socket.on('add new child circle', (title, description, id, fn) => {
+            const newChildCircle = new Child({title, description, id});
+            newChildCircle.save()
+            .then(() => console.log('Child circle added!'))
+            .then(
+                Child.find()
+                    .then(childs => fn(childs), console.log('added'))
+                    .catch(err => console.log(json('Error: ' + err)))
+            )
+            .then(socket.broadcast.emit('getAllAdd', 'add' ))
+            .catch(error => json('Error : ' + error))
+            
+            
+        });
+
+        socket.on('delete the last child circle', (id, fn) => {
+            Child.findByIdAndDelete(id)
+            .then(() => console.log('Child circle deleted!'))
+            .then(Child.find()
+                    .then(childs => fn(childs), console.log('deleted'))
+                    .catch(err => console.log(json('Error: ' + err)))
+            )
+            .then(socket.broadcast.emit('getAllDelete', 'delete'))
+            .catch(error => json('Error : ' + error));
+         });
+
+        socket.on('get child circle by ID', (id, fn) => {
+            Child.findById(id)
+            .then( child => fn(child), console.log('get'))
+            .catch(error => console.log('Error : ' + error))
+        }),
+
+        socket.on('update props circle', (id, updateCircle) => {
+            Child.findById(id)
+            .then(child => {
+                child.title = updateCircle.title
+                child.description = updateCircle.description
+                child.id = Number(updateCircle.id)
+    
+            child.save()
+                .then(() => console.log('child circle uptdated!!'))
+                .catch(error => console.log('Error : ' + error))
+            })
+            .then(socket.broadcast.emit('update', 'updated'))
+            .catch(error => console.log('Error : ' + error))
+        });
+
 });
 
 

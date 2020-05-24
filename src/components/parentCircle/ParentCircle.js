@@ -16,16 +16,16 @@ const ParentCircle = props => {
                 cx={originX}
                 cy={originY}
                 r={innerCircleRadius}
-                fill='gray'
                 stroke='black'
                 strokeWidth='0.3'
+                fill='gray'
             />
             <foreignObject 
                 x={originX-12.5} 
                 y={originY-9} 
                 width='25'
                 height='18'
-                fontSize="3"
+                fontSize="25%"
                 >
                 <div xmlns="http://www.w3.org/1999/xhtml" className='parentDescriptionContainer'>
                     <span className='parentDescription' width='16' height='12'>

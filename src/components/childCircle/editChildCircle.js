@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import io from 'socket.io-client';
 import { makeStyles, TextField, Button, Container, Box
          } from '@material-ui/core';
 
-
+// set style compenent of material UI
 const useStyles = makeStyles(() => ({
     rootTitle: {   
     },
@@ -19,31 +19,22 @@ const useStyles = makeStyles(() => ({
 }));
 
 const EditChildCircle = props => {
-
     const [circleID] = useState(props.location.aboutProps.id);
+    const [circle, setCircle] = useState([])
+    const ENDPOINT = 'localhost:5000/';
 
-    const [circle, setCircle] = useState([{
-        title: '',
-        description: '',
-        id: '',
-    }])
-
-    
-    useEffect(() => {}, [circle]);
-    useEffect(getCircle,[]);
-
-
-    const mainPath = 'http://localhost:5000/';
+    useEffect(() => {
+        getCircle();
+    },[]);
 
     const getCircle = () => {
-        axios.get(mainPath + 'childs/' + circleID)
-            .then(response => {
-                setCircle(response.data)
-            })
-            .catch(error => console.log('This is the error to the methode get : ' + error))
-    }
+        const socket = io.connect(ENDPOINT);
 
-    
+        socket.emit('get child circle by ID', circleID, (data) => {
+            console.log(data)
+            setCircle(data);
+        });
+    }
 
     const handleChangeTitle = (event) => {
         const updateCircle = {
@@ -72,11 +63,13 @@ const EditChildCircle = props => {
             id: circle.id,
         }
 
-        axios.post(mainPath + 'childs/update/' + circleID, updateCircle)
-            .then(res => console.log(res.data))
-            .catch((error) => {console.log('Message error from action update: ' + error)})
+        const socket = io.connect(ENDPOINT);
 
-        setTimeout(function(){ window.location = '/'}, 500)
+        socket.emit('update props circle', circleID, updateCircle,'update', (data) => {
+            console.log(data);
+        });
+
+        setTimeout(function(){ window.location = '/'}, 500) // JMA why i need timer
     }
 
     const classes = useStyles();
@@ -89,7 +82,7 @@ const EditChildCircle = props => {
                         id='filled-basic' 
                         label='Title' 
                         value={circle.title}
-                        onChange={handleChangeTitle} 
+                        onChange={handleChangeTitle}
                         InputLabelProps={{
                             shrink: true,
                           }}

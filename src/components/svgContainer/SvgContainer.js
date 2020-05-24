@@ -3,7 +3,6 @@ import queryString from 'query-string';
 import io from 'socket.io-client';
 
 import { Button, ButtonGroup, makeStyles} from '@material-ui/core';
-import axios from 'axios';
 import './SvgContainer.css';
 import ParentCircle from '../parentCircle/ParentCircle';
 import ChildCircle from '../childCircle/ChildCircle';
@@ -21,66 +20,68 @@ const useStylesButton = makeStyles(() => ({
 const  SvgContainer = ({ location }) => {
 // ---------------- initialize variable -------------
   const [array, setArray] = useState([]);
-  const [name, setName] = useState('');
-  const [mindmap, setMindmap] =useState('');
-
-  const mainPath = 'http://localhost:5000/';
   const ENDPOINT = 'localhost:5000/';
 // --------------------------------------------------
 
 // ............... catch event and update .......................
-  // actualise when load page;
-  useEffect(() => {getAll()},[]);
-  // actialise when array is updated (setArray);
-  useEffect(() => {},[array]);
-  // for the moment is the proto for use socket.io
+
+  // get the USERNAME connect.
   useEffect(() => {
   // get the information from the search bar emit by the login page;
     const { username } = queryString.parse(location.search);
-    setName(username);
     const mindmapCard = 'MindMap 1';
-    setMindmap(mindmapCard);
 
   // connect the client to socket.io;
-    // this is the proto from the documentation socket.io;
     const socket = io.connect(ENDPOINT);
-
-    socket.emit('ferret', username, mindmapCard, (data) => {
+    socket.emit('start', username, mindmapCard, (data) => {
       console.log(data)
     });
-
     socket.on('join', (data) => {
       console.log(data);
     });
+    getAll()
+  },[ENDPOINT, location.search]); 
 
-  },[ENDPOINT, location.search]);
-// .................................................
+  // Actualise when add, delete, update child circle.
+  useEffect(() => {
+    const socket = io.connect(ENDPOINT);
+    socket.on('getAllDelete', data => {
+      console.log(data)
+      getAll();
+    });
+    socket.on('getAllAdd', data => {
+      console.log(data)
+      getAll();
+    });
+    socket.on('update', data => {
+      console.log(data);
+      getAll();
+    })
+  },[]);
+
+// ..............................................................
 
 // __________ Request to data base MongooseDB ____________
   // get title and description of each child circle;
   const getAll = () => {
-    axios.get(mainPath + 'childs/')
-      .then(response => {
-        setArray(response.data)
-      })  
-      .catch(error => console.log('this is the error to the methode getAll' + error))
+    const mindmapCard = 'MindMap 1';
+    const socket = io.connect(ENDPOINT);
+
+    socket.emit('get all childs circles', mindmapCard, (data) => {
+      setArray(data);
+    });    
   };
 
   // add new child circle with value by default;
   const add = () => {
-    const newCircle = {
-      title: 'New circle ',
-      description: '',
-      id: array.length + 1
-    }
+    const title = 'New circle sio';
+    const description = '';
+    const id = array.length + 1;
 
-    axios.post(mainPath + 'childs/add', newCircle)
-      .then(response => { console.log(response.data); 
-       getAll(); 
-      })
-      .catch((error) => { console.log(`message error from post add : ${error}`)}
-      )
-
+    const socket = io.connect(ENDPOINT);
+    socket.emit('add new child circle', title, description, id, (data) => {
+      setArray(data);
+    });
   };
 
   // delete the last create child circle (like -1);
@@ -88,14 +89,14 @@ const  SvgContainer = ({ location }) => {
     if(array.length > 0) {
       const number = array.length-1;
       const lastCircleId = array[number]._id
+      const socket = io.connect(ENDPOINT);
 
-      axios.delete(mainPath + 'childs/'+ lastCircleId)
-        .then(response => {setArray(array.filter(el => el._id !== lastCircleId));
-        })
-        .catch(error => console.log(`message error from action delete : ${error}`))
+      socket.emit('delete the last child circle', lastCircleId, (data) => {
+        setArray(data);
+      });
     }
   };
-// _________________________________________________________
+
 
 // -------------- element for the DOM ----------------------
   // generate all child circle element;
@@ -125,7 +126,8 @@ const  SvgContainer = ({ location }) => {
             </div>
   }; 
 //----------------------------------------------------------
-  // react component return
+
+  // react component return DOM
   return (
     <div>
       {Buttons()}
