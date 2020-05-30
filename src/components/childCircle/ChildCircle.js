@@ -41,7 +41,9 @@ const ChildCircle = props => {
                 fontSize='20%'
                 >
                 <div className='childDescriptionContainer'>
-                    <Link  to={{pathname: '/edit', aboutProps:{id: circle._id}}} className="childDescription">
+                    <Link   to={{pathname: '/edit', aboutProps:{id: circle._id}}}
+                            className="childDescription"
+                    >
                         {circle.title}
                     </Link>  
                 </div>

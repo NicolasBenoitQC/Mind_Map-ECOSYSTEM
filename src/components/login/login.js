@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { setPropsSession } from '../../actions';
+
 import { makeStyles, Container, TextField, FormControl, 
     InputLabel, Select, Box, Button,  } from '@material-ui/core';
 
@@ -28,6 +31,11 @@ const useStyles = makeStyles((theme) => ({
 const Login = () => {
     const [name, setName] = useState('');
     const [mindmap, setMindmap] = useState('');
+    const session = {
+        username: name,
+        mindmap: mindmap
+    };
+    const dispatch = useDispatch();
 
     const classes = useStyles();
     return (
@@ -62,16 +70,17 @@ const Login = () => {
                     </FormControl>
                     <br />
                     <Link 
-                    onClick={event => (!name || !mindmap) ? event.preventDefault() : null}
-                    to={`/?username=${name}&mindmapCard=${mindmap}`}
-                    className={classes.rootLink}
-                    type='submit'
+                        onClick={event => (!name || !mindmap) ? event.preventDefault() : null}
+                        to={`/?username=${name}&mindmapCard=${mindmap}`}
+                        className={classes.rootLink}
+                        type='submit'
                     >
                         <Box className={classes.rootButton}>
                             <Button 
                             variant="outlined" 
                             aria-label="outlined primary button group"
                             type="submit"
+                            onClick={() => dispatch(setPropsSession(session))}
                             >
                                 Join the mindmap card
                             </Button>

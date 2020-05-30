@@ -56,7 +56,11 @@ const  SvgContainer = ({ location }) => {
     socket.on('update', data => {
       console.log(data);
       getAll();
-    })
+    });
+    socket.on('delete', data => {
+      console.log(data);
+      getAll();
+    });
   },[]);
 
 // ..............................................................

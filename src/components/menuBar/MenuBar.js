@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, createRef } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -24,13 +24,10 @@ const useStylesBar = makeStyles((theme) => ({
 const MenuBar = props => {
     
     const classesBar = useStylesBar();
-    const [auth] = React.useState(true);
-    const [anchorEl, setAnchorEl] = React.useState(null);
+    const [auth] = useState(true);
+    const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
-
-    /*const handleChange = (event) => {
-        setAuth(event.target.checked);
-    };*/
+    const ref =  createRef();
 
     const handleMenu = (event) => {
         setAnchorEl(event.currentTarget);
@@ -55,7 +52,7 @@ const MenuBar = props => {
                 Mind Map ECOSYSTEM
                 </Typography>
                 {auth && (
-                <div>
+                <div ref={ref} >
                     <IconButton
                     aria-label="account of current user"
                     aria-controls="menu-appbar"

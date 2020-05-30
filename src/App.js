@@ -6,9 +6,8 @@ import Navbar from './components/menuBar/MenuBar';
 import SvgContainer from './components/svgContainer/SvgContainer';
 import EditChildCircle from './components/childCircle/editChildCircle';
 
-
 const  App = props => {
-  
+
   return (
     <Router>
       <div classename='container'>
